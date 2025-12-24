@@ -15,6 +15,111 @@ With NgRx:     ONE Store holds ALL data. Components just read from it.
 
 ---
 
+## Setting Up NgRx (From Scratch)
+
+### Step 1: Install Packages
+
+```bash
+# Core package (required)
+npm install @ngrx/store
+
+# DevTools for debugging (recommended)
+npm install @ngrx/store-devtools
+
+# Effects for API calls (optional - add later when needed)
+npm install @ngrx/effects
+```
+
+Or use Angular CLI schematics:
+
+```bash
+ng add @ngrx/store
+ng add @ngrx/store-devtools
+```
+
+### Step 2: Configure App Module
+
+```typescript
+// app.module.ts
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
+@NgModule({
+  imports: [
+    BrowserModule,
+
+    // Initialize the store (empty for now, features add their own state)
+    StoreModule.forRoot({}),
+
+    // Enable Redux DevTools browser extension
+    StoreDevtoolsModule.instrument({
+      maxAge: 25  // Keep last 25 states in history
+    })
+  ]
+})
+export class AppModule { }
+```
+
+### Step 3: Create a Feature Module
+
+Create a folder for your feature (e.g., `counter/`) with these files:
+
+```
+src/app/counter/
+├── counter.state.ts       # 1. Define state shape
+├── counter.actions.ts     # 2. Define actions
+├── counter.reducer.ts     # 3. Handle state changes
+├── counter.selectors.ts   # 4. Query state
+├── counter.facade.ts      # 5. Clean API (optional but recommended)
+├── counter.component.ts   # 6. UI component
+└── counter.module.ts      # 7. Wire everything together
+```
+
+### Step 4: Register Feature in Feature Module
+
+```typescript
+// counter.module.ts
+import { StoreModule } from '@ngrx/store';
+import { counterReducer } from './counter.reducer';
+
+@NgModule({
+  imports: [
+    // Register this feature's state under the key 'counter'
+    StoreModule.forFeature('counter', counterReducer)
+  ]
+})
+export class CounterModule { }
+```
+
+### Step 5: Import Feature Module in App
+
+```typescript
+// app.module.ts
+import { CounterModule } from './counter/counter.module';
+
+@NgModule({
+  imports: [
+    // ... other imports
+    CounterModule  // Add your feature module
+  ]
+})
+export class AppModule { }
+```
+
+### Quick Setup Checklist
+
+```
+[ ] npm install @ngrx/store @ngrx/store-devtools
+[ ] Add StoreModule.forRoot({}) to AppModule
+[ ] Add StoreDevtoolsModule.instrument() to AppModule
+[ ] Create feature folder with state, actions, reducer, selectors
+[ ] Add StoreModule.forFeature() to feature module
+[ ] Import feature module in AppModule
+[ ] Install Redux DevTools browser extension
+```
+
+---
+
 ## The Flow (Super Simple)
 
 ```
